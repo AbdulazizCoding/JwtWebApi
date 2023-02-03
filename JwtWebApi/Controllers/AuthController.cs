@@ -1,5 +1,7 @@
 ﻿using JwtWebApi.Dtos;
 using JwtWebApi.Entities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -14,10 +16,19 @@ public class AuthController : ControllerBase
 {
     public static User user = new User();
     private readonly IConfiguration configuration;
+    private readonly IUserService userService;
 
-    public AuthController(IConfiguration configuration)
+    public AuthController(IConfiguration configuration, IUserService userService)
     {
         this.configuration = configuration;
+        this.userService = userService;
+    }
+
+    [HttpGet, Authorize]
+    public ActionResult GetMe()
+    {
+        var userName = userService.GetMyName();
+        return Ok(userName);
     }
 
     [HttpPost("register")]
